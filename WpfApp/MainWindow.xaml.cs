@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,16 +22,16 @@ namespace WpfApp
     public partial class MainWindow : Window
     {
         // Modifiable parameters for this code (not necessarily the sensor's profile)
-        private static int TARGET_MAX_SPEED_ALLOWED = 150;   // max speed to be tracked; anything faster is ignored
-        private static int TARGET_MIN_SPEED_ALLOWED = 1;   // min speed to be tracked; anything slower is ignored
-        private double IDLE_NOTICE_INTERVAL = 10.0;   // time in secs waiting to, um, take action on idle (in state of "not tracking" only)
-        private double TARGETLESS_MIN_INTERVAL_TIME = 0.75;  // grace period for object to track again (hysteresis)
+        private static int TARGET_MAX_SPEED_ALLOWED = 150;  // max speed to be tracked; anything faster is ignored
+        private static int TARGET_MIN_SPEED_ALLOWED = 13;   // min speed to be tracked; anything slower is ignored
+        private double IDLE_NOTICE_INTERVAL = 10.0;         // time in secs waiting to, um, take action on idle (in state of "not tracking" only)
+        private double TARGETLESS_MIN_INTERVAL_TIME = 0.75; // grace period for object to track again (hysteresis)
         // note that a change in direction does not allow for this.  
-        private double MIN_TRACK_TO_ACQUIRED_TIME = 0.1;  // min time in secs that object needs to be tracked for it to be counted
+        private double MIN_TRACK_TO_ACQUIRED_TIME = 0.1;    // min time in secs that object needs to be tracked for it to be counted
         private string OPS24X_INFO_QUERY_COMMAND = "??";
 
         // OPS24x configuration parameters (sent to sensor)
-        private string OPS24X_UNITS_PREF = "UK";            // US for MPH , UK for Km/H 
+        private string OPS24X_UNITS_PREF = "UC";            // US for MPH, UK for Km/H, "UC" for cm/s
         private string OPS24X_SAMPLING_FREQUENCY = "SX";    // 10Ksps
         private string OPS24X_TRANSMIT_POWER = "PX";        // max power
         private string OPS24X_MAGNITUDE_MIN = "M>20\n";     // Magnitude must be > this
@@ -42,7 +43,7 @@ namespace WpfApp
         private string OPS24X_BIDIRECTIONAL = "R|";
         private string OPS24X_INBOUND_ONLY = "R+";
         private string OPS24X_OUTBOUND_ONLY = "R|";
-        private string OPS24X_DIRECTION_PREF = "R|";  // OPS24X_BIDIRECTIONAL;
+        private string OPS24X_DIRECTION_PREF = "R|";        // OPS24X_BIDIRECTIONAL / OPS24X_INBOUND_ONLY;
 
         // These are for lab development only, so hand-waves are usable
         // private string OPS24X_UNITS_PREF = "UC";  // "UC" for cm/s
@@ -67,7 +68,7 @@ namespace WpfApp
 
         private void ConnectUsb(object sender, RoutedEventArgs e)
         {
-            if (serialPort1==null)
+            if (comboBox1.SelectedIndex == 0)
             {
                 return;
             }
@@ -81,13 +82,27 @@ namespace WpfApp
             {
                 serialPort1.PortName = comboBox1.Items[comboBox1.SelectedIndex].ToString();
                 serialPort1.Open();
-                if (serialPort1.IsOpen)
+                SendMessage(OPS24X_SAMPLING_FREQUENCY);
+                SendMessage(OPS24X_TRANSMIT_POWER);
+                SendMessage(OPS24X_MAGNITUDE_MIN);
+                SendMessage(OPS24X_DECIMAL_DIGITS);
+                SendMessage(OPS24X_MIN_REPORTABLE);
+                SendMessage(OPS24X_MAX_REPORTABLE);
+                SendMessage(OPS24X_UNITS_PREF);
+                SendMessage(OPS24X_BLANKS_PREF);
+                SendMessage(OPS24X_LIVE_SPEED);
+                SendMessage(OPS24X_INBOUND_ONLY);
+                
+                while (true)
                 {
-                    label1.Content = "Port is opened successfully!";
-                }
-                else
-                {
-                    label1.Content = "Impossible to open port!";
+                    string recvMsg = ReceiveMessage();
+                    if (recvMsg.IndexOf('{') == -1)
+                    {
+                        double velocity = Double.Parse(recvMsg);
+                        Console.WriteLine("Velocity : " + velocity);
+                        txtVelocity.Text = recvMsg;
+                        // Thread.Sleep(500);
+                    }
                 }
             }
         }
@@ -95,19 +110,21 @@ namespace WpfApp
         private void DisconnectUsb(object sender, RoutedEventArgs e)
         {
             serialPort1.Close();
-            label1.Content = "Port successfully closed!";
         }
 
-        private void RelayOpen(object sender, RoutedEventArgs e)
+        private void SendMessage(string message)
         {
-            serialPort1.Write(new byte[] { 0xFF, 0x01, 0x01 }, 0, 3);
-            label2.Content = "Relay is opened successfully!";
+            // string은 Encoding을 통해 byte[]로 변환
+            // System.Text.Encoding.Unicode.GetBytes (16바이트) / System.Text.Encoding.UTF8.GetBytes (12바이트)
+            byte[] utf8bytes = System.Text.Encoding.UTF8.GetBytes(message);
+            serialPort1.Write(utf8bytes, 0, utf8bytes.Length);
+            ReceiveMessage();
         }
 
-        private void RelayClose(object sender, RoutedEventArgs e)
+        private string ReceiveMessage()
         {
-            serialPort1.Write(new byte[] { 0xFF, 0x01, 0x00 }, 0, 3);
-            label2.Content = "Relay successfully closed!";
+            string recvMsg = serialPort1.ReadLine();
+            return recvMsg;
         }
 
     }

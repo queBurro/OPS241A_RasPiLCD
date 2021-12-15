@@ -15,14 +15,10 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Width="80" Grid.Row="0" Grid.Column="0" />
-        <Label x:Name="label1" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" Width="200" Height="20" Background="#FF59E60D" Grid.Row="0" Grid.Column="1" />
-        <Label x:Name="label2" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" Width="200" Height="20" Background="#FF2CEF11" Grid.Row="1" Grid.Column="0" />
-        <Label x:Name="label3" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" Width="200" Height="20" Background="#FF2CEF11" Grid.Row="1" Grid.Column="1" />
-        <TextBlock Text="Velocity" Grid.Row="2" Grid.Column="0" />
-        <TextBlock x:Name="txtVelocity" Grid.Row="2" Grid.Column="1" />
-        <Button Content="Connect OPS242A" HorizontalAlignment="Left" Height="50" Margin="18,64,0,0" VerticalAlignment="Top" Width="112" Click="ConnectUsb" Background="#FF59D018" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"/>
+        <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Width="80" Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0" />
+        <TextBlock Text="Velocity" Width="200" Height="32" Grid.Row="1" Grid.Column="0" />
+        <TextBlock x:Name="txtVelocity" Width="200" Height="32" Foreground="Black" Text="0" Grid.Row="1" Grid.Column="1" />
+        <Button Content="Connect OPS242A" HorizontalAlignment="Center" Width="200" Height="32" Margin="0,0,0,0" VerticalAlignment="Top" Click="ConnectUsb" Background="#FF59D018" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>
