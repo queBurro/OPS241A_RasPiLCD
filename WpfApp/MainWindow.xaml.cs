@@ -81,7 +81,14 @@ namespace WpfApp
             else
             {
                 serialPort1.PortName = comboBox1.Items[comboBox1.SelectedIndex].ToString();
+                // baudrate = 115200
+                // parity = serial.PARITY_NONE
+                // stopbits = serial.STOPBITS_ONE
+                // bytesize = serial.EIGHTBITS
+                // timeout = 1
+                // writeTimeout = 2
                 serialPort1.Open();
+
                 SendMessage(OPS24X_SAMPLING_FREQUENCY);
                 SendMessage(OPS24X_TRANSMIT_POWER);
                 SendMessage(OPS24X_MAGNITUDE_MIN);
