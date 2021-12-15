@@ -1,2 +1,2 @@
-# ops242a-radar-example
-OPS242-A Doppler Short Range Radar Sensor control example
+# OmniPreSense OPS242-A Doppler Short Range Radar Sensor control example
+
