@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -57,6 +58,7 @@ namespace WpfApp
         {
             this.serialPort1 = new System.IO.Ports.SerialPort(new System.ComponentModel.Container());
             InitializeComponent();
+            ComponentDispatcher.ThreadIdle += new System.EventHandler( thread_Idle ) ;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -100,17 +102,7 @@ namespace WpfApp
                 SendMessage(OPS24X_LIVE_SPEED);
                 SendMessage(OPS24X_INBOUND_ONLY);
                 
-                while (true)
-                {
-                    string recvMsg = ReceiveMessage();
-                    if (recvMsg.IndexOf('{') == -1)
-                    {
-                        double velocity = Double.Parse(recvMsg);
-                        Console.WriteLine("Velocity : " + velocity);
-                        txtVelocity.Text = recvMsg;
-                        // Thread.Sleep(500);
-                    }
-                }
+                readingVelocity = ReadVeloctiy() ;
             }
         }
 
@@ -134,5 +126,28 @@ namespace WpfApp
             return recvMsg;
         }
 
+        Task<string> readingVelocity ;
+
+        async Task<string> ReadVeloctiy()
+        {
+            return await Task.Run( ()=>serialPort1.ReadLine() ) ;
+        }
+
+        void FetchOutVelocity() {
+            if( null == readingVelocity ) {
+                return ;
+            }
+            if( readingVelocity.IsCompleted ) {
+                var text = readingVelocity.Result ;
+                if( text.IndexOf('{') == -1 ) {
+                    txtVelocity.Text = text ;
+                }
+                readingVelocity = ReadVeloctiy() ;
+            }
+        }
+
+        void thread_Idle( object sender, EventArgs e ) {
+            FetchOutVelocity();
+        }
     }
 }
