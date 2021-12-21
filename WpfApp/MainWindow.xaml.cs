@@ -102,7 +102,7 @@ namespace WpfApp
                 SendMessage(OPS24X_LIVE_SPEED);
                 SendMessage(OPS24X_INBOUND_ONLY);
                 
-                readingVelocity = ReadVeloctiy() ;
+                readingVelocity = ReadVelocity() ;
             }
         }
 
@@ -128,7 +128,7 @@ namespace WpfApp
 
         Task<string> readingVelocity ;
 
-        async Task<string> ReadVeloctiy()
+        async Task<string> ReadVelocity()
         {
             return await Task.Run( ()=>serialPort1.ReadLine() ) ;
         }
@@ -142,7 +142,7 @@ namespace WpfApp
                 if( text.IndexOf('{') == -1 ) {
                     txtVelocity.Text = text ;
                 }
-                readingVelocity = ReadVeloctiy() ;
+                readingVelocity = ReadVelocity() ;
             }
         }
 
