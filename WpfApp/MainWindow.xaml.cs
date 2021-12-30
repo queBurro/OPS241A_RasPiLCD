@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bitflow;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,8 @@ namespace WpfApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        OmniPreSenseOPS242 speedSensor ;
+
         // Modifiable parameters for this code (not necessarily the sensor's profile)
         private static int TARGET_MAX_SPEED_ALLOWED = 150;  // max speed to be tracked; anything faster is ignored
         private static int TARGET_MIN_SPEED_ALLOWED = 13;   // min speed to be tracked; anything slower is ignored
@@ -58,6 +61,7 @@ namespace WpfApp
         {
             this.serialPort1 = new System.IO.Ports.SerialPort(new System.ComponentModel.Container());
             InitializeComponent();
+            speedSensor = new OmniPreSenseOPS242() ;
             ComponentDispatcher.ThreadIdle += new System.EventHandler( thread_Idle ) ;
         }
 
