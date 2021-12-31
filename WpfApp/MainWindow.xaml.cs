@@ -70,6 +70,8 @@ namespace WpfApp
             comboBox1.Items.Clear();
             foreach (string com in System.IO.Ports.SerialPort.GetPortNames())
                 comboBox1.Items.Add(com);
+
+            speedSensor.Display = txtVelocity ;
         }
 
         private void ConnectUsb(object sender, RoutedEventArgs e)
