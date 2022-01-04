@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -139,6 +140,36 @@ namespace BitflowUtils
                 Display.Text = ( (int)velocity ).ToString() ;
             }
             FetchOutVelocity() ;
+        }
+
+        public static string DetectSerialPort() {
+            var serialPort = new SerialPort( new System.ComponentModel.Container() ) ;
+            serialPort.ReadTimeout  = 1000 ;
+            serialPort.WriteTimeout = 1000 ;
+
+            var serialPortNames = SerialPort.GetPortNames() ;
+            foreach( string serialPortName in serialPortNames ) {
+                string response ;
+                try {
+                    serialPort.PortName = serialPortName ;
+                    serialPort.Open() ;
+                    serialPort.Write( "?P" ) ;
+                    response = serialPort.ReadExisting() ;
+                    serialPort.Close() ;
+                }
+                catch {
+                    try {
+                        if( serialPort.IsOpen ) {
+                            serialPort.Close() ;
+                        }
+                    } catch{}
+                    continue ;
+                }
+                if( response.Contains("OPS242A") ) {
+                    return serialPortName ;
+                }
+            }
+            return null ;
         }
     }
 }

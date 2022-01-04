@@ -33,6 +33,8 @@ namespace WpfApp
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            var serialPortName = OmniPreSenseOPS242.DetectSerialPort() ;
+
             comboBox1.Items.Clear();
             foreach (string com in System.IO.Ports.SerialPort.GetPortNames())
                 comboBox1.Items.Add(com);
