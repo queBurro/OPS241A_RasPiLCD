@@ -10,8 +10,17 @@ namespace BitflowUtils
 {
     public class OmniPreSenseOPS242
     {
+        public const string NO_DATA = "--" ;
+
+        TextBlock display ;
         public TextBlock Display {
-            set ; private get ;
+            set {
+                display = value ;
+                display.Text = NO_DATA ;
+            }
+            private get {
+                return display ;
+            }
         }
 
         // Modifiable parameters for this code (not necessarily the sensor's profile)
@@ -108,7 +117,7 @@ namespace BitflowUtils
                 contents = await Task.Run( ()=>serialPort.ReadExisting() ) ;
             }
             catch {
-                Display.Text = "XXX" ;
+                display.Text = NO_DATA ;
                 return ;
             }
             double? velocity = null ;
