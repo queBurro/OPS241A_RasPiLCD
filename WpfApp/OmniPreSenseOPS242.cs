@@ -127,7 +127,7 @@ namespace BitflowUtils
                 }
             }
             if( velocity != null ) {
-                Display.Text = velocity?.ToString("#0.##") ;
+                Display.Text = ( (int)velocity ).ToString() ;
             }
             FetchOutVelocity() ;
         }
