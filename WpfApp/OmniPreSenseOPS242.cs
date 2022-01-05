@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace Bitflow
+namespace BitflowUtils
 {
-    class OmniPreSenseOPS242
+    public class OmniPreSenseOPS242
     {
         public TextBlock Display {
             set ; private get ;
