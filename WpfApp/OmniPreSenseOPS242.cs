@@ -33,7 +33,7 @@ namespace BitflowUtils
         const string OPS24X_INFO_QUERY_COMMAND = "??";
 
         // OPS24x configuration parameters (sent to sensor)
-        const string OPS24X_UNITS_PREF = "UC";            // US for MPH, UK for Km/H, "UC" for cm/s
+        const string OPS24X_UNITS_PREF = "UK";            // US for MPH, UK for Km/H, "UC" for cm/s
         const string OPS24X_SAMPLING_FREQUENCY = "SX";    // 10Ksps
         const string OPS24X_TRANSMIT_POWER = "PX";        // max power
         const string OPS24X_MAGNITUDE_MIN = "M>20\n";     // Magnitude must be > this
