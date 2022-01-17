@@ -113,33 +113,25 @@ namespace BitflowUtils
 
         async void FetchOutVelocity()
         {
-            string contents ;
+            string line ;
             try {
-                contents = await Task.Run( ()=>serialPort.ReadExisting() ) ;
+                line = await Task.Run( ()=>serialPort.ReadLine() ) ;
             }
             catch {
                 display.Text = NO_DATA ;
                 return ;
             }
-            double? velocity = null ;
-            using( StringReader sr = new StringReader(contents) ) {
-                string line ;
-                while( ( line=sr.ReadLine() ) != null ) {
-                    if( line.IndexOf('{') >= 0 ) {
-                        continue ;
-                    }
-                    try {
-                        velocity = double.Parse( line ) ;
-                    }
-                    catch {
-                        continue ;
-                    }
+            try {
+                if( line.IndexOf('{') < 0 ) {
+                    double velocity = double.Parse( line ) ;
+                    Display.Text = ( (int)velocity ).ToString() ;
                 }
             }
-            if( velocity != null ) {
-                Display.Text = ( (int)velocity ).ToString() ;
+            catch {
             }
-            FetchOutVelocity() ;
+            finally {
+                FetchOutVelocity() ;
+            }
         }
 
         public static string DetectSerialPort() {
@@ -153,8 +145,9 @@ namespace BitflowUtils
                 try {
                     serialPort.PortName = serialPortName ;
                     serialPort.Open() ;
-                    serialPort.Write( "?P" ) ;
-                    response = serialPort.ReadExisting() ;
+                    serialPort.WriteLine( "?P" ) ;
+                    response = serialPort.ReadLine() ;
+                    response += serialPort.ReadExisting() ;
                     serialPort.Close() ;
                 }
                 catch {
