@@ -44,7 +44,7 @@ namespace WpfApp
 
         private void ConnectUsb(object sender, RoutedEventArgs e)
         {
-            if (comboBox1.SelectedIndex == 0)
+            if (comboBox1.SelectedIndex < 0)
             {
                 return;
             }
